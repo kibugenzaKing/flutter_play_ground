@@ -1,5 +1,8 @@
+// Credit: Vandad Nahavandipoor
+
 import 'dart:math' show pi;
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 void main() {
   runApp(
@@ -98,20 +101,83 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Stack(
                 children: <Widget>[
                   // front
-                  Container(
-                    height: size,
-                    width: size,
-                    color: Colors.green,
-                  ),
-
-                  // back
                   Transform(
                     alignment: Alignment.center,
-                    transform: Matrix4.identity()..translate(0, 0, -size),
+                    transform: Matrix4.identity()
+                      ..translate(Vector3(0, 0, -size)),
                     child: Container(
                       height: size,
                       width: size,
-                      color: Colors.purple,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.purple,
+                      ),
+                    ),
+                  ),
+
+                  // left side
+                  Transform(
+                    alignment: Alignment.centerLeft,
+                    transform: Matrix4.identity()..rotateY(pi / 2.0),
+                    child: Container(
+                      height: size,
+                      width: size,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+
+                  // right side
+                  Transform(
+                    alignment: Alignment.centerRight,
+                    transform: Matrix4.identity()..rotateY(-pi / 2.0),
+                    child: Container(
+                      height: size,
+                      width: size,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+
+                  // back
+                  Container(
+                    height: size,
+                    width: size,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.green,
+                    ),
+                  ),
+
+                  // top side
+                  Transform(
+                    alignment: Alignment.topCenter,
+                    transform: Matrix4.identity()..rotateX(-pi / 2.0),
+                    child: Container(
+                      height: size,
+                      width: size,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.orange,
+                      ),
+                    ),
+                  ),
+
+                  // bottom side
+                  Transform(
+                    alignment: Alignment.bottomCenter,
+                    transform: Matrix4.identity()..rotateX(pi / 2.0),
+                    child: Container(
+                      height: size,
+                      width: size,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.brown,
+                      ),
                     ),
                   ),
                 ],
