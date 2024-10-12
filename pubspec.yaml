@@ -11,12 +11,13 @@ dependencies:
     sdk: flutter
   get: ^4.6.6 # used globally as default manager
   vector_math: ^2.1.4 # used in only, lib/3d_box/
+  sqlite3: ^2.4.3 # database
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-
 
 
 flutter:
