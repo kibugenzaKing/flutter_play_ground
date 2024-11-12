@@ -23,7 +23,7 @@ void main() async {
     final bool path = await file.exists();
     if (path) {
       final Database db = sqlite3.open(file.path);
-      const String tableName = BibleBooksModel.tableName;
+      // const String tableName = BibleBooksModel.tableName;
       // DBOperations.createTable(
       //   execute: db.execute,
       //   tableName: tableName,
