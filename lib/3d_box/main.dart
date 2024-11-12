@@ -23,7 +23,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with TickerProviderStateMixin<HomePage> {
   late AnimationController _xController;
   late AnimationController _yController;
   late AnimationController _zController;

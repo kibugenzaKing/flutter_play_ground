@@ -311,3 +311,34 @@ String reverseString(String input) {
   }
   return reversed;
 }
+
+void printPercentage() async {
+  'started'.appLog();
+  for (int i = 1; i <= 150; i++) {
+    final int percentage = ((100 / 150) * i).toInt();
+    final List<String> replacer = <String>['/', '\\', '|', '*'];
+    replacer.shuffle();
+    final int done = percentage ~/ 5;
+    // check if it's the next line after checked mark
+    // 3 + 1 == 20 - 3
+    final List<String> theRest = List<String>.generate(
+      20 - done,
+      (int i) => '[-]',
+    );
+    // animate first [-] which is being executed
+    if (theRest.isNotEmpty) theRest[0] = '[${replacer.first}]';
+    final String output =
+        '${'✅ ' * done}${theRest.join()} $percentage%'; // 4 16
+
+    stdout.write('\r$output'); // '\r' moves to the start of the line
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+
+    // Clear the line by printing spaces over it
+    if (i == 150) {
+      stdout.write('\r${'\n'}\r');
+      continue;
+    }
+    stdout.write('\r${' ' * output.length}\r');
+  }
+  'done'.appLog(color: purple);
+}

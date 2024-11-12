@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter_play_ground/sql/dart_global.dart';
-import 'package:sqlite3/sqlite3.dart';
 
 void main() async {
   await codes();
