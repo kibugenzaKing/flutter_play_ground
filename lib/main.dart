@@ -1,48 +1,64 @@
-// import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter_play_ground/sql/dart_global.dart';
 import 'package:flutter_play_ground/working_with_sql.dart';
-// import 'package:flutter_play_ground/working_with_sql.dart';
-// import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 void main() async {
   try {
-    printPercentage();
-    // final File file =
-    //     File('/home/yking/Documents/Presentation/bible_csv/my_bible.sqlite');
-    // final bool path = await file.exists();
-    // if (path) {
-    //   final Database db = sqlite3.open(file.path);
-    //   const String tableName = 'bible_books';
-    //   DBOperations.createTable(
-    //     execute: db.execute,
-    //     tableName: tableName,
-    //     columns: BibleModel.createTableColumns,
-    //   );
-    //   DBOperations.insertData(
-    //     execute: db.execute,
-    //     tableName: tableName,
-    //     data: BibleModel.insertData(
-    //       bookIdList: <int>[],
-    //       bookNameList: <String>[],
-    //     ),
-    //   );
-    //   db.dispose();
-    // } else {
-    //   throw ('file does not exist');
-    // }
+    final String filecsv = await readStringFromFile(
+      '/home/yking/Documents/Presentation/bible_csv/bible_books.csv',
+    );
+    final List<String> books = filecsv.split('\n');
+    books.removeWhere((String element) => element.trim().isEmpty);
+    final List<int> bookIdList = <int>[];
+    final List<String> bookNameList = <String>[];
+    for (int i = 0; i < books.length; i++) {
+      final List<String> dt = books[i].split(',');
+      bookIdList.add(int.parse(dt[0]));
+      bookNameList.add(dt[3]);
+    }
+    final File file =
+        File('/home/yking/Documents/Presentation/bible_csv/my_bible.sqlite');
+    final bool path = await file.exists();
+    if (path) {
+      final Database db = sqlite3.open(file.path);
+      const String tableName = BibleBooksModel.tableName;
+      // DBOperations.createTable(
+      //   execute: db.execute,
+      //   tableName: tableName,
+      //   columns: BibleBooksModel.createTableColumns,
+      // );
+      // await DBOperations.insertData(
+      //   execute: db.execute,
+      //   tableName: tableName,
+      //   data: BibleBooksModel.insertData(
+      //     bookIdList: bookIdList,
+      //     bookNameList: bookNameList,
+      //   ),
+      // );
+      db.dispose();
+    } else {
+      throw ('file does not exist');
+    }
   } catch (_) {
     _.appLog();
   }
 }
 
-class BibleModel {
+class BibleBooksModel {
+  static const String tableName = 'bible_books';
+
   static const String bookName = 'book_name';
   static const String bookId = 'book_id';
+  static const String chaptersNumber = 'chapters_number';
+  static const String versesNumber = 'verses_number';
 
   static Map<String, DataType> createTableColumns = <String, DataType>{
     bookId: DataType.integer,
     bookName: DataType.text,
+    chaptersNumber: DataType.integer,
+    versesNumber: DataType.integer,
   };
 
   /// this has to be equal to the number of items in [createTableColumns]
@@ -55,6 +71,28 @@ class BibleModel {
         bookName: bookNameList,
       };
 }
+
+// class BibleBooksModel {
+//   static const String tableName = 'bible_books';
+
+//   static const String bookName = 'book_name';
+//   static const String bookId = 'book_id';
+
+//   static Map<String, DataType> createTableColumns = <String, DataType>{
+//     bookId: DataType.integer,
+//     bookName: DataType.text,
+//   };
+
+//   /// this has to be equal to the number of items in [createTableColumns]
+//   static Map<String, List<dynamic>> insertData({
+//     required List<dynamic> bookIdList,
+//     required List<dynamic> bookNameList,
+//   }) =>
+//       <String, List<dynamic>>{
+//         bookId: bookIdList,
+//         bookName: bookNameList,
+//       };
+// }
 
 
 

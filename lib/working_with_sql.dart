@@ -41,7 +41,22 @@ CREATE TABLE IF NOT EXISTS $tableName (
   $columnsData
 );
 ''');
-    return;
+  }
+
+  /// add more columns to a table, each column gets the value of the dataType respectively
+  static void addColumnsToExistingTable({
+    required dynamic execute,
+    required String tableName,
+    required Map<String, DataType> columns,
+  }) {
+    // ALTER TABLE users ADD COLUMN age INTEGER
+    final Iterable<String> columnsKeys = columns.keys;
+    final Iterable<DataType> dataType = columns.values;
+    for (int i = 0; i < columnsKeys.length; i++) {
+      execute(
+        'ALTER TABLE $tableName ADD COLUMN ${columnsKeys.elementAt(i)} ${_data_type(dataType.elementAt(i))}',
+      );
+    }
   }
 
   /// execute is db.execute
@@ -58,11 +73,11 @@ CREATE TABLE IF NOT EXISTS $tableName (
   ///   },
   /// );
   /// ```
-  static void insertData({
+  static Future<void> insertData({
     required dynamic execute,
     required String tableName,
     required Map<String, List<dynamic>> data,
-  }) {
+  }) async {
     try {
       String keys = '';
       List<String> values = <String>[];
@@ -97,6 +112,7 @@ CREATE TABLE IF NOT EXISTS $tableName (
         execute('BEGIN;');
         for (int i = 0; i < values.length; i++) {
           execute('INSERT INTO $tableName $keys VALUES ${values[i]};');
+          await loadingIndicator(total: values.length, i: i);
         }
         execute('COMMIT;');
       }
@@ -264,7 +280,7 @@ String _data_type(DataType data) {
 
 String _value_type(dynamic value) {
   if (value.runtimeType == String) {
-    return "'$value'";
+    return '"$value"';
   }
   if (value.runtimeType == int) {
     return value.toString();
