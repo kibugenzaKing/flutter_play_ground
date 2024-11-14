@@ -312,8 +312,12 @@ String reverseString(String input) {
   return reversed;
 }
 
-Future<void> loadingIndicator({required int total, required int i}) async {
-  final int percentage = ((100 / (total)) * (i + 1)).toInt();
+Future<void> loadingIndicator({
+  required int length,
+  required int i,
+  String? doneExecuting,
+}) async {
+  final int percentage = ((100 / (length)) * (i + 1)).toInt();
   final List<String> replacer = <String>['/', '\\', '|', '*'];
   replacer.shuffle();
   final int done = percentage ~/ 5;
@@ -331,8 +335,10 @@ Future<void> loadingIndicator({required int total, required int i}) async {
   // await Future<void>.delayed(const Duration(milliseconds: 100));
 
   // Clear the line by printing spaces over it
-  if (i + 1 == total) {
-    stdout.write('\r${'\n\n${greenColorFunc('${' ' * 7}Done...${' ' * 7}')}\n\n'}\r');
+  if (i + 1 == length) {
+    stdout.write(
+      '\r${'\n\n${greenColorFunc('${' ' * 7}${doneExecuting ?? 'Done...'}${' ' * 7}')}\n\n'}\r',
+    );
   } else {
     stdout.write('\r${' ' * output.length}\r');
   }

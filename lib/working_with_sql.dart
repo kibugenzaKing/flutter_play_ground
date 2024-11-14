@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS $tableName (
         execute('BEGIN;');
         for (int i = 0; i < values.length; i++) {
           execute('INSERT INTO $tableName $keys VALUES ${values[i]};');
-          await loadingIndicator(total: values.length, i: i);
+          await loadingIndicator(length: values.length, i: i);
         }
         execute('COMMIT;');
       }
@@ -196,22 +196,36 @@ CREATE TABLE IF NOT EXISTS $tableName (
   }
 
   /// ex:  db.execute("UPDATE users SET age = 26 WHERE name = 'Alice';");
+  ///
   /// ```dart
   /// DBOperations.updateData(
   ///   execute: db.execute,
   ///   tableName: tableName,
-  ///   update: 'age = 41',
-  ///   condition: 'name = "Bosco"',
+  ///   update: ['age = 26'],
+  ///   condition: 'name = ["'Alice'"]',
   /// );
   /// ```
   static void updateData({
     required dynamic execute,
     required String tableName,
-    required String update,
-    required String condition,
+    required List<String> updates,
+    required List<String> conditions,
   }) {
+    if (tableName.isEmpty) return;
+
     try {
-      execute('UPDATE $tableName SET $update WHERE $condition;');
+      execute('BEGIN;');
+
+      for (int i = 0; i < updates.length; i++) {
+        execute(
+          'UPDATE $tableName SET ${updates.elementAt(i)} WHERE ${conditions.elementAt(i)};',
+        );
+        loadingIndicator(length: updates.length, i: i);
+      }
+
+      execute('COMMIT;');
+
+      // execute('UPDATE $tableName SET $update WHERE $condition;');
     } catch (_) {
       _.appLog();
     }
@@ -224,14 +238,21 @@ CREATE TABLE IF NOT EXISTS $tableName (
   ///   tableName: tableName,
   ///   condition: 'name = "Bosco"',
   /// );
+  /// // delete on null works like
+  /// DELETE FROM user WHERE name IS NULL;
   /// ```
   static void deleteData({
     required dynamic execute,
     required String tableName,
-    required String condition,
+    required String unique,
+    bool deleteOnNull = false,
   }) {
     try {
-      execute('DELETE FROM $tableName WHERE $condition;');
+      if (deleteOnNull) {
+        execute('DELETE FROM $tableName WHERE $unique IS NULL;');
+      } else {
+        execute('DELETE FROM $tableName WHERE $unique;');
+      }
     } catch (_) {
       _.appLog();
     }
